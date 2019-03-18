@@ -52,9 +52,15 @@ class Plugin(object):
         pass
 
     def get_clouds(self):
-        with open('/etc/openstack/clouds.yaml') as f:
+        with open('/var/lib/nodepool/.config/openstack/clouds.yaml') as f:
             clouds = yaml.load(f)
-            clouds_list = [c for c in clouds['clouds']]
+            op_clouds = [c for c in clouds['clouds']]
+
+        with open('/etc/nodepool/nodepool.yaml') as np:
+            clouds = yaml.load(np)
+            np_clouds = [c['cloud'] for c in clouds['providers']]
+
+        clouds_list = op_clouds and np_clouds
 
         if self.cloud not in clouds_list + ['all']:
             print("Error: Cloud %s is not found, check all..." % self.cloud)
