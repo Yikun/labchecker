@@ -5,13 +5,22 @@ import yaml
 
 class SecurityGroupPlugin(Plugin):
 
+    type = 'provider'
     failed = False
     reasons = []
+    cloud = ''
 
     def get_clouds(self):
         with open('/etc/openstack/clouds.yaml') as f:
             clouds = yaml.load(f)
             clouds_list = [c for c in clouds['clouds']]
+
+        if self.cloud not in clouds_list + ['all']:
+            print("Error: Cloud %s is not found, check all..." % self.cloud)
+            print("Please use the cloud in %s." % clouds_list)
+            exit(2)
+
+        clouds_list = [self.cloud] if self.cloud in clouds_list else clouds_list
         return clouds_list
 
     def check(self):
@@ -37,4 +46,4 @@ class SecurityGroupPlugin(Plugin):
                     print('%s' % r)
             else:
                 print("Provider (%s) security group check: \033[1;32m PASSED \033[0m") % cloud
-        print("-"*40)
+            print("-"*40)
