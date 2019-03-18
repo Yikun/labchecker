@@ -63,7 +63,7 @@ class Plugin(object):
         clouds_list = op_clouds and np_clouds
 
         if self.cloud not in clouds_list + ['all']:
-            print("Error: Cloud %s is not found, check all..." % self.cloud)
+            print("Error: Cloud %s is not found." % self.cloud)
             print("Please use the cloud in %s." % clouds_list)
             exit(2)
 

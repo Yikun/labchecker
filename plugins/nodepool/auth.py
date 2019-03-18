@@ -19,7 +19,8 @@ class AuthPlugin(Plugin):
             clouds = yaml.load(np)
             np_clouds = [c['cloud'] for c in clouds['providers']]
 
-        for cloud in np_clouds:
+        clouds_list = [self.cloud] if self.cloud in np_clouds else np_clouds
+        for cloud in clouds_list:
             self.failed = False
             self.reasons = []
             if cloud not in op_clouds:
