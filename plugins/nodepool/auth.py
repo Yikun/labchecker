@@ -1,5 +1,6 @@
 from labcheck import Plugin
 import yaml
+import commands
 
 
 class AuthPlugin(Plugin):
@@ -10,7 +11,7 @@ class AuthPlugin(Plugin):
     reasons = []
 
     def check(self):
-        with open('/var/lib/nodepool/.config/openstack/clouds.yaml') as f:
+        with open('/etc/openstack/clouds.yaml') as f:
             clouds = yaml.load(f)
             op_clouds = [c for c in clouds['clouds']]
 
@@ -19,7 +20,15 @@ class AuthPlugin(Plugin):
             np_clouds = [c['cloud'] for c in clouds['providers']]
 
         for cloud in np_clouds:
-            if cloud in op_clouds:
+            self.failed = False
+            self.reasons = []
+            if cloud not in op_clouds:
                 self.failed = True
                 self.reasons.append("The clouds.yaml is not set.")
+
+            auth_check = 'openstack --os-cloud %s token issue -f value -c id' % cloud
+            res = commands.getoutput(auth_check)
+            if "HTTP 401" in res or "not found" in res:
+                self.failed = True
+                self.reasons.append(res)
             self.print_result(cloud)

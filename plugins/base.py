@@ -52,7 +52,7 @@ class Plugin(object):
         pass
 
     def get_clouds(self):
-        with open('/var/lib/nodepool/.config/openstack/clouds.yaml') as f:
+        with open('/etc/openstack/clouds.yaml') as f:
             clouds = yaml.load(f)
             op_clouds = [c for c in clouds['clouds']]
 
