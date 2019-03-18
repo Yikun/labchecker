@@ -1,6 +1,7 @@
 # A simple Python plugin loading system
 # see http://stackoverflow.com/questions/14510286/plugin-architecture-plugin-manager-vs-inspecting-from-plugins-import
 import six
+import yaml
 
 class PluginMount(type):
     """
@@ -37,10 +38,23 @@ class PluginMount(type):
 @six.add_metaclass(PluginMount)
 class Plugin(object):
     """A plugin which must provide a register_signals() method"""
+    cloud = 'all'
 
     def register_signals(self):
         print("%s has been loaded." % self.__class__.__name__)
 
     def check(self):
-        print("check ok")
         pass
+
+    def get_clouds(self):
+        with open('/etc/openstack/clouds.yaml') as f:
+            clouds = yaml.load(f)
+            clouds_list = [c for c in clouds['clouds']]
+
+        if self.cloud not in clouds_list + ['all']:
+            print("Error: Cloud %s is not found, check all..." % self.cloud)
+            print("Please use the cloud in %s." % clouds_list)
+            exit(2)
+
+        clouds_list = [self.cloud] if self.cloud in clouds_list else clouds_list
+        return clouds_list

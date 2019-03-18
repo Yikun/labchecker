@@ -1,6 +1,5 @@
-from cmd import Plugin
+from labcheck import Plugin
 import commands
-import yaml
 
 
 class SecurityGroupPlugin(Plugin):
@@ -8,20 +7,7 @@ class SecurityGroupPlugin(Plugin):
     type = 'provider'
     failed = False
     reasons = []
-    cloud = ''
 
-    def get_clouds(self):
-        with open('/etc/openstack/clouds.yaml') as f:
-            clouds = yaml.load(f)
-            clouds_list = [c for c in clouds['clouds']]
-
-        if self.cloud not in clouds_list + ['all']:
-            print("Error: Cloud %s is not found, check all..." % self.cloud)
-            print("Please use the cloud in %s." % clouds_list)
-            exit(2)
-
-        clouds_list = [self.cloud] if self.cloud in clouds_list else clouds_list
-        return clouds_list
 
     def check(self):
         clouds = self.get_clouds()
