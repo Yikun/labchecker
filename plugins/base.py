@@ -1,6 +1,6 @@
 # A simple Python plugin loading system
 # see http://stackoverflow.com/questions/14510286/plugin-architecture-plugin-manager-vs-inspecting-from-plugins-import
-
+import six
 
 class PluginMount(type):
     """
@@ -34,9 +34,9 @@ class PluginMount(type):
         instance.register_signals()
 
 
+@six.add_metaclass(PluginMount)
 class Plugin(object):
     """A plugin which must provide a register_signals() method"""
-    __metaclass__ = PluginMount
 
     def register_signals(self):
         print("%s has been loaded." % self.__class__.__name__)
