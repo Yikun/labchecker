@@ -38,10 +38,12 @@ def main(argv):
         for plugin in Plugin.plugins:
             if plugin.type == type:
                 plugin.cloud = cloud
+                plugin.check_begin()
                 plugin.check()
     else:
         for plugin in Plugin.plugins:
             plugin.cloud = cloud
+            plugin.check_begin()
             plugin.check()
 
 

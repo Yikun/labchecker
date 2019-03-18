@@ -5,9 +5,9 @@ import commands
 class SecurityGroupPlugin(Plugin):
 
     type = 'provider'
+    name = 'Security Group Check'
     failed = False
     reasons = []
-
 
     def check(self):
         clouds = self.get_clouds()
@@ -28,11 +28,4 @@ class SecurityGroupPlugin(Plugin):
             if "icmp 0.0.0.0/0  None" not in res:
                 self.failed = True
                 self.reasons.append("ICMP check failed.")
-            if self.failed:
-                print("Provider (%s) security group check: \033[1;31m FAILED \033[0m") % cloud
-                print("Reason:")
-                for r in self.reasons:
-                    print('%s' % r)
-            else:
-                print("Provider (%s) security group check: \033[1;32m PASSED \033[0m") % cloud
-            print("-"*40)
+            self.print_result(cloud)

@@ -39,9 +39,14 @@ class PluginMount(type):
 class Plugin(object):
     """A plugin which must provide a register_signals() method"""
     cloud = 'all'
+    type = 'Base'
+    name = 'Base Check'
 
     def register_signals(self):
         print("%s has been loaded." % self.__class__.__name__)
+
+    def check_begin(self):
+        print("\033[1;30m" + "-" * 10 + self.type + " - " + self.name + "-" * 10 + "\033[0m")
 
     def check(self):
         pass
@@ -58,3 +63,12 @@ class Plugin(object):
 
         clouds_list = [self.cloud] if self.cloud in clouds_list else clouds_list
         return clouds_list
+
+    def print_result(self, cloud):
+        if self.failed:
+            print("(%s) " + (40-len(cloud)) * "-" + " \033[1;31m FAILED \033[0m") % cloud
+            print("Reason:")
+            for r in self.reasons:
+                print('%s' % r)
+        else:
+            print("(%s) " + (40-len(cloud)) * "-" + " \033[1;32m PASSED \033[0m") % cloud
